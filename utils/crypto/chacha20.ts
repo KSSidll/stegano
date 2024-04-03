@@ -1,8 +1,7 @@
 import { Chacha20 } from "ts-chacha20";
-import * as util from "text-encoding";
 
-const encoder = new util.TextEncoder();
-const decoder = new util.TextDecoder();
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
 
 // typically we could increment that for each operation but since this is local only and we aren't storing any information anywhere, we do the oopsie that is unsafe nonce value, not very great, but i don't know how else we could handle that in current context
 const nonce: Uint8Array = stringToUint8Array("nonce_value", 12);
@@ -14,11 +13,11 @@ const nonce: Uint8Array = stringToUint8Array("nonce_value", 12);
  * @returns Encrypted [message]
  */
 export function encrypt(key: string, message: string): string {
-  return decoder.decode(
+  return Buffer.from(
     new Chacha20(stringToUint8Array(key, 32), nonce).encrypt(
-      stringToUint8Array(message, 32)
-    )
-  );
+      new Uint8Array(Buffer.from(message))
+    ).buffer
+  ).toString("base64");
 }
 
 /**
@@ -28,11 +27,11 @@ export function encrypt(key: string, message: string): string {
  * @returns Decrypted [encrypted_message]
  */
 export function decrypt(key: string, encrypted_message: string): string {
-  return decoder.decode(
+  return Buffer.from(
     new Chacha20(stringToUint8Array(key, 32), nonce).decrypt(
-      stringToUint8Array(encrypted_message, 32)
-    )
-  );
+      new Uint8Array(Buffer.from(encrypted_message, "base64"))
+    ).buffer
+  ).toString();
 }
 
 /**
