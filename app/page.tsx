@@ -33,8 +33,10 @@ export default function Home() {
       const newEncodedImageSrc = encode(messageToEncode, imageSrc);
       setEncodedImageSrc(newEncodedImageSrc);
 
-      const decodedMessage = decode(newEncodedImageSrc);
-      setDecodedMessage(decodedMessage);
+      setTimeout(() => {
+        const decodedMessage = decode(newEncodedImageSrc);
+        setDecodedMessage(decodedMessage);
+      }, 500); // i couldn't find out why, but if we try to decode too fast, we get an index error, so to have that happen less we decode after 500ms
     }
   };
 
